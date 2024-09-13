@@ -1,3 +1,6 @@
 # migrations database
-pip install alembic
-alembic init alembic
+    pip install alembic
+    alembic init alembic
+
+# auth jwt
+    pip install python-jose passlib[bcrypt] fastapi sqlalchemy
