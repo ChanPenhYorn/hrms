@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from app.db.session import engine, SessionLocal
 from app.models import user
 from app.api.v1 import users
+from app.api.v1 import employees
 from time import time
 import logging
 from sqlalchemy.exc import OperationalError
@@ -50,9 +51,7 @@ async def log_middleware(request, call_next):
 
 # Include user API routes
 
-async def hello():
-    return {"message": "Hello, World!"}
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
-# app.include_router(users.router, prefix="/users", tags=["users"])
+app.include_router(employees.router, prefix="/api/v1/employees", tags=["employees"])
 
 logger.info("FastAPI application started with SECRET_KEY: %s", settings.SECRET_KEY)
