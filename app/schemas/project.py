@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import date
+from datetime import datetime
 
 class ProjectCreate(BaseModel):
     name: str
@@ -20,9 +20,9 @@ class ProjectResponse(BaseModel):
     description: Optional[str] = None
     active: bool
     created_by: str
-    created_at: date
+    created_at: datetime
     updated_by: Optional[str] = None
-    updated_at: date
+    updated_at: datetime
 
     class Config:
         orm_mode = True

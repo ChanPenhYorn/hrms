@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.sql import func
-from app.db.session import Base
+from app.db.base import Base
+from sqlalchemy.orm import relationship
 
 class Position(Base):
     __tablename__ = "positions"
@@ -13,3 +14,6 @@ class Position(Base):
     created_at = Column(DateTime, default=func.now())
     updated_by = Column(Integer, nullable=True)  # Assuming updated_by is an integer
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+
+    # Define the relationship
+    employees = relationship('Employee', back_populates='position')

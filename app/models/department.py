@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.sql import func
-from app.db.session import Base
+from app.db.base import Base
+from sqlalchemy.orm import relationship
+
 
 class Department(Base):
     __tablename__ = "departments"
@@ -13,3 +15,6 @@ class Department(Base):
     description = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+
+    # Define the relationship
+    employees = relationship('Employee', back_populates='department')

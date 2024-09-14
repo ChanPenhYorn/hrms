@@ -2,12 +2,13 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 from app.db.base import Base
-
-# Import your models here
 from app.models.employee import Employee
 from app.models.department import Department
 from app.models.position import Position
 from app.models.project import Project
+
+
+
 
 config = context.config
 
@@ -16,6 +17,7 @@ if config.config_file_name is not None:
 
 # Set target_metadata to Base.metadata
 target_metadata = Base.metadata
+
 
 def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")

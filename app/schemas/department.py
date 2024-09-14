@@ -2,10 +2,9 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
-
 class DepartmentBase(BaseModel):
     name: str = Field(..., max_length=255)
-    active: str = Field(..., max_length=255)
+    active: bool = Field(default=True)
     created_by: str = Field(..., max_length=255)
     updated_by: Optional[str] = Field(None, max_length=255)
     description: Optional[str] = Field(None, max_length=255)
@@ -18,8 +17,6 @@ class DepartmentUpdate(DepartmentBase):
     
 class DepartmentResponse(DepartmentBase):
     id: int
-
-
 
 class DepartmentInDB(DepartmentBase):
     id: int

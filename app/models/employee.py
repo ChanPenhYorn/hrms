@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Date, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, Date, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 from datetime import datetime
@@ -15,9 +15,9 @@ class Employee(Base):
     gender = Column(String)
     dob = Column(Date)  # Changed to Date type for storing dates
     active = Column(Boolean, default=True)
-    # department_id = Column(Integer, ForeignKey(Department.id))
-    # project_id = Column(Integer, ForeignKey(Project.id))
-    # position_id = Column(Integer, ForeignKey(Position.id))
+    department_id = Column(Integer, ForeignKey('departments.id'))  # Corrected table name
+    project_id = Column(Integer, ForeignKey('projects.id'))  # Corrected table name
+    position_id = Column(Integer, ForeignKey('positions.id'))  # Corrected table name?
     photo = Column(String, nullable=True)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)  # Add this field
@@ -26,7 +26,7 @@ class Employee(Base):
     updated_at = Column(DateTime, onupdate=datetime.utcnow)
     updated_by = Column(String, nullable=True)
 
-    # # Define relationships if necessary
-    # department = relationship(Department)  # Assuming you have a Department model
-    # project = relationship(Project)  # Assuming you have a Project model
-    # position = relationship(Position)  # Assuming you have a Position model
+    # Define relationships
+    department = relationship('Department', back_populates='employees')
+    project = relationship('Project', back_populates='employees')
+    position = relationship('Position', back_populates='employees')

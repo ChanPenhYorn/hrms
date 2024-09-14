@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, Date
 from sqlalchemy.sql import func
-from app.db.session import Base
+from app.db.base import Base
+from sqlalchemy.orm import relationship
 
 class Project(Base):
     __tablename__ = "projects"
@@ -13,3 +14,6 @@ class Project(Base):
     created_at = Column(Date, default=func.now())
     updated_by = Column(String(255), nullable=True)
     updated_at = Column(Date, default=func.now(), onupdate=func.now())
+
+    # Define the relationship
+    employees = relationship('Employee', back_populates='project')
