@@ -1,6 +1,21 @@
-# migrations database
+# database init
     pip install alembic
     alembic init alembic
+
+# update database and table
+    alembic revision --autogenerate -m "create initial tables"
+    alembic upgrade head
+
+# Steps to Fix the "Target Database is Not Up to Date" Error:
+ alembic history --verbose
+    alembic history
+    alembic current
+    alembic upgrade head
+    alembic stamp head
+
+
+
+
 
 # auth jwt
     pip install python-jose passlib[bcrypt] fastapi sqlalchemy
