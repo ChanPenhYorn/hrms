@@ -7,6 +7,9 @@ from app.models.department import Department
 from app.models.position import Position
 from app.models.project import Project
 from app.models.approve import Approve
+from app.models.leave_type import LeaveType
+from app.models.attendance import Attendance
+from app.models.leave_request import LeaveRequest
 
 
 
