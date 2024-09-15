@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 from app.db.session import engine, SessionLocal
-from app.api.v1 import  departments, employees, positions, projects, auth
+from app.api.v1 import  departments, employees, positions, projects, auth, approves
 from time import time
 import logging
 from sqlalchemy.exc import OperationalError
@@ -64,5 +64,6 @@ app.include_router(employees.router, prefix="/api/v1/employees", tags=["employee
 app.include_router(departments.router, prefix="/api/v1/departments", tags=["departments"])
 app.include_router(positions.router, prefix="/api/v1/positions", tags=["positions"])
 app.include_router(projects.router, prefix="/api/v1/projects", tags=["projects"])
+app.include_router(approves.router, prefix="/api/v1/approves", tags=["approves"])
 
 logger.info("FastAPI application started with SECRET_KEY: %s", settings.SECRET_KEY)

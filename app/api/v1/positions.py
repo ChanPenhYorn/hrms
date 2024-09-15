@@ -1,10 +1,11 @@
 from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List
 from app.models.position import Position as PositionModel
 from app.schemas.position import PositionCreate, PositionResponse, PositionUpdate
 from app.db.session import get_db
 from sqlalchemy.orm import Session
+from typing import Optional
 
 router = APIRouter()
 
@@ -23,9 +24,41 @@ def create_position(position: PositionCreate, db: Session = Depends(get_db)):
     db.refresh(db_position)
     return db_position
 
+
 @router.get("/", response_model=List[PositionResponse])
-def read_positions(db: Session = Depends(get_db)):
-    return db.query(PositionModel).all()
+def read_positions(
+    page: int = Query(1, gt=0),
+    size: int = Query(10, gt=0),
+    sort: str = Query("position"),
+    direction: str = Query("asc"),
+    active: Optional[bool] = None,  # Optional filter parameter
+    db: Session = Depends(get_db)
+):
+    # Validate the sort direction
+    if direction not in ["asc", "desc"]:
+        raise HTTPException(status_code=400, detail="Sort direction must be 'asc' or 'desc'")
+    
+    # Calculate offset for pagination
+    offset = (page - 1) * size
+
+    # Create the sorting order
+    sort_column = getattr(PositionModel, sort, None)
+    if not sort_column:
+        raise HTTPException(status_code=400, detail="Invalid sort field")
+    
+    if direction == "asc":
+        positions_query = db.query(PositionModel).order_by(sort_column.asc())
+    else:
+        positions_query = db.query(PositionModel).order_by(sort_column.desc())
+
+    # Apply filtering
+    if active is not None:
+        positions_query = positions_query.filter(PositionModel.active == active)
+
+    # Apply pagination
+    positions = positions_query.offset(offset).limit(size).all()
+
+    return positions
 
 @router.get("/{position_id}", response_model=PositionResponse)
 def read_position(position_id: int, db: Session = Depends(get_db)):

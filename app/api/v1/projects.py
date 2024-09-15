@@ -1,10 +1,11 @@
 from datetime import date
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,Query
 from typing import List
 from app.models.project import Project as ProjectModel
 from app.schemas.project import ProjectCreate, ProjectResponse, ProjectUpdate
 from app.db.session import get_db
 from sqlalchemy.orm import Session
+from typing import Optional
 
 router = APIRouter()
 
@@ -24,8 +25,39 @@ def create_project(project: ProjectCreate, db: Session = Depends(get_db)):
     return db_project
 
 @router.get("/", response_model=List[ProjectResponse])
-def read_projects(db: Session = Depends(get_db)):
-    return db.query(ProjectModel).all()
+def read_projects(
+    page: int = Query(1, gt=0),
+    size: int = Query(10, gt=0),
+    sort: str = Query("name"),
+    direction: str = Query("asc"),
+    active: Optional[bool] = None,  # Optional filter parameter
+    db: Session = Depends(get_db)
+):
+    # Validate the sort direction
+    if direction not in ["asc", "desc"]:
+        raise HTTPException(status_code=400, detail="Sort direction must be 'asc' or 'desc'")
+    
+    # Calculate offset for pagination
+    offset = (page - 1) * size
+
+    # Create the sorting order
+    sort_column = getattr(ProjectModel, sort, None)
+    if not sort_column:
+        raise HTTPException(status_code=400, detail="Invalid sort field")
+    
+    if direction == "asc":
+        projects_query = db.query(ProjectModel).order_by(sort_column.asc())
+    else:
+        projects_query = db.query(ProjectModel).order_by(sort_column.desc())
+
+    # Apply filtering
+    if active is not None:
+        projects_query = projects_query.filter(ProjectModel.active == active)
+
+    # Apply pagination
+    projects = projects_query.offset(offset).limit(size).all()
+
+    return projects
 
 @router.get("/{project_id}", response_model=ProjectResponse)
 def read_project(project_id: int, db: Session = Depends(get_db)):
